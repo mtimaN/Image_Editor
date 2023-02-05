@@ -1,0 +1,59 @@
+## Copyright Mantu Matei 312CA 2022-2022
+# README tema03: Image Editor
+
+## Description
+This program written in C loads Portable GrayMap (PGM) and Portable
+PixMap (PPM) files and can select portions of the photos, rotate, crop,
+equalize, apply filters, print a histogram and save the results in
+either an ascii format or a binary format.
+
+## Usage + How it works
+For making this program, I have made an `image` struct that contains
+the size of the image along the coordinates of the points that define
+the selected portion of the picture, the type of the image and the max
+value of the pixels.
+
+At first, the program awaits a Netpbm format picture to be loaded from
+locat files. It is done by using the command `LOAD <filename>`.
+Then, several comands can be executed:
+
+1. `LOAD <filename>` - deletes the previously loaded picture and loads a
+new one from `<filename>`. If the picture is saved in binary form, it is
+read byte by byte using an `unsigned char` variable (because unsigned char
+has a range of 0-255 - exactly the range of one byte). All lines containing `#`
+in the file are ignored as they are considered to be comments.
+
+2. `SELECT <x1> <x2> <y1> <y2>` - selects a portion of the picture loaded,
+swaps the coordinates if they are in the wrong order.
+
+3. `SELECT ALL` - selects the whole picture loaded.
+
+4. `EQUALIZE` - if the loaded picture is a grayscale one, it equalizes it
+using the formula provided in the PDF.
+
+5. `CROP` - crops the picture; done by making a copy of the selection,
+freeing the old photo and replacing its address with the selection's.
+
+6. `APPLY <FILTER>` - applies one of the 4 filters: EDGE, SHARPEN, BLUR,
+GAUSSIAN BLUR. Implemented by using 3x3 Kernel matrices; only works for
+PixMap files.
+
+7. `HISTOGRAM <x> <y>` - prints a histogram of the picture loaded, provided
+that it is a grayscale one. The histogram is made of `y` bins, while `x` is
+the max value of a bin.
+
+8. `SAVE <filename> [ascii]` - saves the loaded picture into <filename>. The
+`ascii` parameter is optional, saving the picture in ASCII format. Otherwise,
+the picture is saved in binary format.
+
+9. `ROTATE <angle>` - [BONUS] - Only works if the angle is a multiple of 90.
+The selection has to either be a square one or be the whole picture. The
+rotations are made by a combination of transposing the matrix and reversing
+the columns and the rows of the matrix. The functions for reversing the rows
+and columns are pretty straight forward, swapping the elements one by one.
+The transposing function works differently depending on whether the submatrix
+selected is square or not: in the case of a square matrix, the elements
+above the main diagonal of the selection are swapped with those under the
+diagonal. In the case of a rectangular matrix, a new matrix is allocated and
+the transposed values are copied from the old one. The old matrix is then freed
+and its address is changed to the new one.
